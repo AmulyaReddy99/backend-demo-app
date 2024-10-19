@@ -1,0 +1,23 @@
+openapi: "3.0.0"
+paths:
+  /hello:
+    get:
+      summary: Hello World
+      operationId: hello
+      tags:
+        - hello
+      responses:
+        type: string
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

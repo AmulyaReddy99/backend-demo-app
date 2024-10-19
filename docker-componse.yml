@@ -1,0 +1,136 @@
+version: '1'
+services:
+  # Zookeeper for Cluster 1
+  zookeeper-cluster1:
+    image: wurstmeister/zookeeper:3.4.6
+    container_name: zookeeper-cluster1
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper-cluster1:2888:3888;2181
+    volumes:
+      - zookeeper-cluster1-data:/var/lib/zookeeper
+    networks:
+      - kafka-network
+
+  # Zookeeper for Cluster 2
+  zookeeper-cluster2:
+    image: wurstmeister/zookeeper:3.4.6
+    container_name: zookeeper-cluster2
+    ports:
+      - "2182:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper-cluster2:2888:3888;2181
+    volumes:
+      - zookeeper-cluster2-data:/var/lib/zookeeper
+    networks:
+      - kafka-network
+
+  # Kafka Brokers for Cluster 1
+  kafka1-cluster1:
+    image: wurstmeister/kafka:2.13-2.6.0
+    container_name: kafka1-cluster1
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-cluster1:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1-cluster1:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - kafka1-cluster1-data:/kafka
+    networks:
+      - kafka-network
+
+  kafka2-cluster1:
+    image: wurstmeister/kafka:2.13-2.6.0
+    container_name: kafka2-cluster1
+    ports:
+      - "9093:9092"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-cluster1:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2-cluster1:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - kafka2-cluster1-data:/kafka
+    networks:
+      - kafka-network
+
+  kafka3-cluster1:
+    image: wurstmeister/kafka:2.13-2.6.0
+    container_name: kafka3-cluster1
+    ports:
+      - "9094:9092"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-cluster1:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3-cluster1:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - kafka3-cluster1-data:/kafka
+    networks:
+      - kafka-network
+
+  # Kafka Brokers for Cluster 2
+  kafka1-cluster2:
+    image: wurstmeister/kafka:2.13-2.6.0
+    container_name: kafka1-cluster2
+    ports:
+      - "9095:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-cluster2:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1-cluster2:9095
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - kafka1-cluster2-data:/kafka
+    networks:
+      - kafka-network
+
+  kafka2-cluster2:
+    image: wurstmeister/kafka:2.13-2.6.0
+    container_name: kafka2-cluster2
+    ports:
+      - "9096:9092"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-cluster2:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2-cluster2:9096
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - kafka2-cluster2-data:/kafka
+    networks:
+      - kafka-network
+
+  kafka3-cluster2:
+    image: wurstmeister/kafka:2.13-2.6.0
+    container_name: kafka3-cluster2
+    ports:
+      - "9097:9092"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-cluster2:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3-cluster2:9097
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+    volumes:
+      - kafka3-cluster2-data:/kafka
+    networks:
+      - kafka-network
+
+# Define networks and volumes
+networks:
+  kafka-network:
+    driver: bridge
+
+volumes:
+  zookeeper-cluster1-data:
+  zookeeper-cluster2-data:
+  kafka1-cluster1-data:
+  kafka2-cluster1-data:
+  kafka3-cluster1-data:
+  kafka1-cluster2-data:
+  kafka2-cluster2-data:
+  kafka3-cluster2-data:
